@@ -32,9 +32,18 @@ class Client(commands.Bot):
   async def on_voice_state_update(self, member, before, after):
     if after.channel:
         print(f"{member} joined {after.channel}")
+        voice_client = discord.utils.get(client.voice_clients, guild=member.guild)
+        print(voice_client)
+        if voice_client is None:
+          channel = after.channel
+          await channel.connect()
     if before.channel:
         print(f"{member} left {before.channel}")
-
+        voice_client = discord.utils.get(client.voice_clients, guild=member.guild)
+        if voice_client is not None:
+          channel = before.channel
+          
+          await voice_client.disconnect()
 
 
 intents = discord.Intents.default()
@@ -84,5 +93,6 @@ async def myButton(interaction: discord.Interaction):
 @client.tree.command(name="listen", description="Listens for your voice", guild=GUILD_ID)
 async def creepyVoice(interaction: discord.Interaction):
   await interaction.channel.voice_channels
+
 
 client.run(DISCORD_TOKEN)
