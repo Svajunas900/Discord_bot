@@ -3,7 +3,7 @@ from discord.ext import commands
 from discord import app_commands
 from dotenv import load_dotenv
 import os 
-
+import time
 
 load_dotenv()
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
@@ -33,10 +33,17 @@ class Client(commands.Bot):
     if after.channel:
         print(f"{member} joined {after.channel}")
         voice_client = discord.utils.get(client.voice_clients, guild=member.guild)
-        print(voice_client)
         if voice_client is None:
           channel = after.channel
           await channel.connect()
+          voice_client = discord.utils.get(client.voice_clients, guild=member.guild)
+          audio_file = "elderbrook-moments.mp3"
+          await play_audio(voice_client, audio_file)
+          if voice_client.is_playing():
+              print("Bot is playing audio")
+          else:
+              print("Bot is not playing audio")
+
     if before.channel:
         print(f"{member} left {before.channel}")
         voice_client = discord.utils.get(client.voice_clients, guild=member.guild)
@@ -52,6 +59,17 @@ intents.voice_states = True
 client = Client(command_prefix="!", intents=intents)
 
 GUILD_ID = discord.Object(id=1357615188332777613)
+
+
+async def play_audio(voice_client, audio_file):
+  print("--------------------------------")
+  print(voice_client, audio_file)
+  print("--------------------------------")
+  if os.path.exists(audio_file):
+    voice_client.play(discord.FFmpegPCMAudio(audio_file))
+    print(f"Playing {audio_file}")
+  else:
+    print(f"Audio file {audio_file} does not exist")
 
 
 @client.tree.command(name="hello", description="Say hello!", guild=GUILD_ID)
