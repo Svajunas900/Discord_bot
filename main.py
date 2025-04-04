@@ -47,4 +47,30 @@ async def printer(interaction: discord.Interaction, printer: str):
   await interaction.response.send_message(printer)
 
 
+@client.tree.command(name="embed", description="I'm embed", guild=GUILD_ID)
+async def embed(interaction: discord.Interaction):
+  embed = discord.Embed(title="I'm title", description="I'm description")
+  embed.add_field(name="THis is title", value="Hello", inline=True)
+  await interaction.response.send_message(embed=embed)
+
+
+class View(discord.ui.View):
+  @discord.ui.button(label="Click me!", style=discord.ButtonStyle.red, emoji="🔥")
+  async def button_callback(self, button, interaction):
+    await button.response.send_message("You have clicked the button!")
+
+  @discord.ui.button(label="2nd Button", style=discord.ButtonStyle.blurple, emoji="😃")
+  async def two_button_callback(self, button, interaction):
+    await button.response.send_message("This is the second button!")
+
+  @discord.ui.button(label="3rd Button", style=discord.ButtonStyle.green, emoji="👻")
+  async def three_button_callback(self, button, interaction):
+    await button.response.send_message("This is the third button!")
+
+
+@client.tree.command(name="button", description="Displaying a button", guild=GUILD_ID)
+async def myButton(interaction: discord.Interaction):
+  await interaction.response.send_message(view=View())
+
+
 client.run(DISCORD_TOKEN)
