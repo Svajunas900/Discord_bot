@@ -29,9 +29,17 @@ class Client(commands.Bot):
   async def on_reaction_add(self, reaction, user):
     await reaction.message.channel.send("You reacted")
 
+  async def on_voice_state_update(self, member, before, after):
+    if after.channel:
+        print(f"{member} joined {after.channel}")
+    if before.channel:
+        print(f"{member} left {before.channel}")
+
+
 
 intents = discord.Intents.default()
 intents.message_content = True
+intents.voice_states = True
 client = Client(command_prefix="!", intents=intents)
 
 GUILD_ID = discord.Object(id=1357615188332777613)
@@ -72,5 +80,9 @@ class View(discord.ui.View):
 async def myButton(interaction: discord.Interaction):
   await interaction.response.send_message(view=View())
 
+
+@client.tree.command(name="listen", description="Listens for your voice", guild=GUILD_ID)
+async def creepyVoice(interaction: discord.Interaction):
+  await interaction.channel.voice_channels
 
 client.run(DISCORD_TOKEN)
